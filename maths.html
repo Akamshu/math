@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primary School Arithmetic Quiz</title>
+    <style>
+          body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            font-size: 36px;
+            color: #333;
+        }
+        p {
+            font-size: 28px;
+            color: #555;
+        }
+        input {
+            width: 120px;
+            font-size: 26px;
+            text-align: center;
+            padding: 10px;
+            border: 3px solid #ccc;
+            border-radius: 10px;
+            outline: none;
+        }
+        button {
+            margin-top: 20px;
+            padding: 15px 25px;
+            font-size: 24px;
+            border: none;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>Arithmetic Quiz</h2>
+        <p id="question"></p>
+        <input type="number" id="answer" placeholder="?">
+        <button onclick="checkAnswer()">Submit</button>
+        <p id="result"></p>
+        <button onclick="generateQuestion()">Next Question</button>
+    </div>
+
+    <script>
+        let num1, num2, correctAnswer, operator;
+        
+        const correctSound = new Audio('mixkit-crowd-in-church-applauding-484.wav');
+        const wrongSound = new Audio('button-10.mp3');
+
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = 'en-US';
+            speech.rate = 0.9;
+            speech.voice = speechSynthesis.getVoices().find(voice => voice.name.includes("Google UK English Male"));
+            window.speechSynthesis.speak(speech);
+        }
+
+        function generateQuestion() {
+            const operations = ['+', '-', '*', '/'];
+            operator = operations[Math.floor(Math.random() * operations.length)];
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+
+            if (operator === '/' && num1 % num2 !== 0) {
+                num1 = num2 * (Math.floor(Math.random() * 5) + 1);
+            }
+            
+            correctAnswer = eval(num1 + operator + num2);
+            const questionText = `What is ${num1} ${operator} ${num2}?`;
+            document.getElementById("question").innerText = questionText;
+            document.getElementById("result").innerText = "";
+            document.getElementById("answer").value = "";
+            
+            speak(questionText);
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseFloat(document.getElementById("answer").value);
+            if (userAnswer === correctAnswer) {
+                const successText = `Correct! The answer is ${correctAnswer}. Well done!`;
+                document.getElementById("result").innerText = successText;
+                document.getElementById("result").style.color = "green";
+                correctSound.play();
+                speak(successText);
+            } else {
+                const failText = `Wrong! The correct answer is ${correctAnswer}.`;
+                document.getElementById("result").innerText = failText;
+                document.getElementById("result").style.color = "red";
+                wrongSound.play();
+                speak(failText);
+            }
+        }
+
+        window.onload = generateQuestion;
+    </script>
+</body>
+</html>
