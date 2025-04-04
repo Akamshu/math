@@ -93,12 +93,29 @@
             }
             
             correctAnswer = eval(num1 + operator + num2);
+            let spokenOperator;
+            switch (operator) {
+                case '+':
+                    spokenOperator = "plus";
+                    break;
+                case '-':
+                    spokenOperator = "minus";
+                    break;
+                case '*':
+                    spokenOperator = "multiply by";
+                    break;
+                case '/':
+                    spokenOperator = "divided by";
+                    break;
+            }
             const questionText = `What is ${num1} ${operator} ${num2}?`;
+            const spokenText = `What is ${num1} ${spokenOperator} ${num2}?`;
+
             document.getElementById("question").innerText = questionText;
             document.getElementById("result").innerText = "";
             document.getElementById("answer").value = "";
             
-            speak(questionText);
+            speak(spokenText);
         }
 
         function checkAnswer() {
