@@ -1,151 +1,355 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primary School Arithmetic Quiz</title>
-    <style>
-          body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .quiz-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        }
-        h2 {
-            font-size: 36px;
-            color: #333;
-        }
-        p {
-            font-size: 28px;
-            color: #555;
-        }
-        input {
-            width: 120px;
-            font-size: 26px;
-            text-align: center;
-            padding: 10px;
-            border: 3px solid #ccc;
-            border-radius: 10px;
-            outline: none;
-        }
-        button {
-            margin-top: 20px;
-            padding: 15px 25px;
-            font-size: 24px;
-            border: none;
-            border-radius: 10px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #result {
-            font-size: 28px;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        @media screen and (max-width: 768px), (max-height: 600px) {
-    .quiz-container {
-        margin: 0;
-        padding: 20px;
-        height: 100vh;
-        box-sizing: border-box;
-        border-radius: 0;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arithmetic Tutorial and Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
+
+    .title {
+      text-align: center;
+      margin: 40px 0 20px;
+      font-size: 36px;
+      color: #333;
+    }
+
+    .operations-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 20px;
+      width: 90%;
+      max-width: 900px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background-color: #007bff;
+      color: white;
+      font-size: 75px;
+      padding: 40px;
+      text-align: center;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      background-color: #0056b3;
+    }
+
+    .container {
+      display: none;
+      background: white;
+      max-width: 700px;
+      width: 90%;
+      margin: auto;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .container h3 {
+      font-size: 26px;
+      color: #222;
+    }
+
+    .container p, .step {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    .input-pair input {
+      width: 100px;
+      font-size: 20px;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 2px solid #ccc;
+      text-align: center;
+    }
+
+    .step {
+      background-color: #f9f9f9;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      border-left: 5px solid #007bff;
+    }
+
+    input[type=number] {
+      font-size: 24px;
+      padding: 10px;
+      width: 120px;
+      text-align: center;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 22px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #result {
+      font-size: 24px;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    /* Navigation Bar */
+.navbar {
+  position: sticky;
+  top: 0;
+  background-color: #007bff;
+  color: white;
+  width: 100%;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-    </style>
+
+.nav-brand {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0 50px;
+}
+
+.nav-links {
+  list-style: none;
+  display:flex;
+  margin:0px 50px;
+  gap: 15px;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+.nav-links li a:hover {
+  color: #ffdd57;
+}
+
+  </style>
 </head>
 <body>
-    <div class="quiz-container">
-        <h2>Arithmetic Quiz</h2>
-        <p id="question"></p>
-        <input type="number" id="answer" placeholder="?">
-        <button onclick="checkAnswer()">Submit</button>
-        <p id="result"></p>
-        <button onclick="generateQuestion()">Next Question</button>
-    </div>
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <div class="nav-brand">🧮 My Arithmetic Tutor</div>
+  <ul class="nav-links">
+    <li><a href="#" onclick="goHome()">🏠 Home</a></li>
+    <li><a href="#" onclick="goHome()">📘 Tutorial</a></li>
+    <!-- <li><a href="#" onclick="startQuiz()">🧪 Quiz</a></li> -->
+  </ul>
+</nav>
 
-    <script>
-        let num1, num2, correctAnswer, operator;
-        
-        const correctSound = new Audio('mixkit-crowd-in-church-applauding-484.wav');
-        const wrongSound = new Audio('button-10.mp3');
+  <div class="title">Choose an Operation</div>
 
-        function speak(text) {
-            const speech = new SpeechSynthesisUtterance(text);
-            speech.lang = 'en-US';
-            speech.rate = 0.9;
-            speech.voice = speechSynthesis.getVoices().find(voice => voice.name.includes("Google UK English Male"));
-            window.speechSynthesis.speak(speech);
+  <!-- Operation Selection -->
+  <div class="operations-container" id="operationMenu">
+    <div class="card" onclick="showTutorial('+')">+</div>
+    <div class="card" onclick="showTutorial('-')">−</div>
+    <div class="card" onclick="showTutorial('*')">×</div>
+    <div class="card" onclick="showTutorial('/')">÷</div>
+  </div>
+
+<!-- Tutorial Section -->
+<div class="container" id="tutorialSection">
+  <h3 id="tutorialTitle"></h3>
+  <p><strong>🎓 Choose a level:</strong></p>
+  <div>
+    <button onclick="setLevel(2)">🔢 Level 1</button>
+    <button onclick="setLevel(3)">🔢 Level 2</button>
+    <button onclick="setLevel(4)">🔢 Level 3</button>
+  </div>
+
+  <p style="margin-top: 20px;">🧮 Enter your numbers:</p>
+  <div class="input-pair" id="inputContainer">
+    <input type="number" class="number-input" placeholder="Number 1" />
+    <input type="number" class="number-input" placeholder="Number 2" />
+  </div>
+
+  <button onclick="showSteps()">Show Me How</button>
+  <div id="stepExplanation" style="margin-top: 15px;"></div>
+  <button onclick="startQuiz()">🎮 Start Quiz</button>
+</div>
+
+
+
+  <!-- Quiz Section -->
+  <div class="container" id="quiz">
+    <p id="question"></p>
+    <input type="number" id="answer" placeholder="?" />
+    <br />
+    <button onclick="checkAnswer()">Submit</button>
+    <p id="result"></p>
+    <button onclick="generateQuestion()">Next Question</button>
+  </div>
+
+  <script>
+    let num1, num2, correctAnswer, operator = null;
+    let level = 2; // Default Level 1
+
+function setLevel(n) {
+  level = n;
+  const container = document.getElementById("inputContainer");
+  container.innerHTML = ''; // Clear previous inputs
+
+  for (let i = 0; i < n; i++) {
+    const input = document.createElement("input");
+    input.type = "number";
+    input.className = "number-input";
+    input.placeholder = `Number ${i + 1}`;
+    input.style.margin = "5px";
+    container.appendChild(input);
+  }
+}
+
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      speechSynthesis.speak(utterance);
+    }
+
+    function showTutorial(selectedOperator) {
+      operator = selectedOperator;
+      document.getElementById("operationMenu").style.display = "none";
+      document.getElementById("tutorialSection").style.display = "block";
+
+      const titles = {
+        '+': 'Addition Tutorial',
+        '-': 'Subtraction Tutorial',
+        '*': 'Multiplication Tutorial',
+        '/': 'Division Tutorial'
+      };
+
+      document.getElementById("tutorialTitle").innerText = titles[operator];
+      document.getElementById("stepExplanation").innerHTML = '';
+    }
+
+function showSteps() {
+  const inputs = document.querySelectorAll(".number-input");
+  const numbers = Array.from(inputs).map(input => parseFloat(input.value));
+  const stepBox = document.getElementById("stepExplanation");
+  stepBox.innerHTML = '';
+
+  if (numbers.some(n => isNaN(n))) {
+    alert("⚠️ Please enter all the numbers.");
+    return;
+  }
+
+  let speakText = '';
+  let result = numbers[0];
+  let steps = `<div class="step">Step 1: Let's use these numbers: ${numbers.join(', ')}</div>`;
+
+  for (let i = 1; i < numbers.length; i++) {
+    switch (operator) {
+      case '+':
+        steps += `<div class="step">Add ➕ ${result} + ${numbers[i]} = ${result + numbers[i]}</div>`;
+        result += numbers[i];
+        break;
+      case '-':
+        steps += `<div class="step">Subtract ➖ ${result} - ${numbers[i]} = ${result - numbers[i]}</div>`;
+        result -= numbers[i];
+        break;
+      case '*':
+        steps += `<div class="step">Multiply ✖️ ${result} × ${numbers[i]} = ${result * numbers[i]}</div>`;
+        result *= numbers[i];
+        break;
+      case '/':
+        if (numbers[i] === 0) {
+          steps += `<div class="step">⚠️ Cannot divide by 0!</div>`;
+          speak("Cannot divide by zero. Try another number.");
+          stepBox.innerHTML = steps;
+          return;
         }
+        steps += `<div class="step">Divide ➗ ${result} ÷ ${numbers[i]} = ${result / numbers[i]}</div>`;
+        result /= numbers[i];
+        break;
+    }
+  }
 
-        function generateQuestion() {
-            const operations = ['+', '-', '*', '/'];
-            operator = operations[Math.floor(Math.random() * operations.length)];
-            num1 = Math.floor(Math.random() * 10) + 1;
-            num2 = Math.floor(Math.random() * 10) + 1;
+  steps += `<div class="step"><strong>🎉 Final Answer: ${result}</strong></div>`;
+  speakText = `Your final answer is ${result}`;
+  stepBox.innerHTML = steps;
+  speak(speakText);
+}
 
-            if (operator === '/' && num1 % num2 !== 0) {
-                num1 = num2 * (Math.floor(Math.random() * 5) + 1);
-            }
-            
-            correctAnswer = eval(num1 + operator + num2);
-            let spokenOperator;
-            switch (operator) {
-                case '+':
-                    spokenOperator = "plus";
-                    break;
-                case '-':
-                    spokenOperator = "minus";
-                    break;
-                case '*':
-                    spokenOperator = "multiply by";
-                    break;
-                case '/':
-                    spokenOperator = "divided by";
-                    break;
-            }
-            const questionText = `What is ${num1} ${operator} ${num2}?`;
-            const spokenText = `What is ${num1} ${spokenOperator} ${num2}?`;
+    function startQuiz() {
+      document.getElementById("tutorialSection").style.display = "none";
+      document.getElementById("quiz").style.display = "block";
+      generateQuestion();
+    }
 
-            document.getElementById("question").innerText = questionText;
-            document.getElementById("result").innerText = "";
-            document.getElementById("answer").value = "";
-            
-            speak(spokenText);
-        }
+    function generateQuestion() {
+      num1 = Math.floor(Math.random() * 10) + 1;
+      num2 = Math.floor(Math.random() * 10) + 1;
 
-        function checkAnswer() {
-            const userAnswer = parseFloat(document.getElementById("answer").value);
-            if (userAnswer === correctAnswer) {
-                const successText = `Correct! The answer is ${correctAnswer}. Well done!`;
-                document.getElementById("result").innerText = successText;
-                document.getElementById("result").style.color = "green";
-                correctSound.play();
-                speak(successText);
-            } else {
-                const failText = `Wrong! The correct answer is ${correctAnswer}.`;
-                document.getElementById("result").innerText = failText;
-                document.getElementById("result").style.color = "red";
-                wrongSound.play();
-                speak(failText);
-            }
-        }
+      if (operator === '/' && num1 % num2 !== 0) {
+        num1 = num2 * (Math.floor(Math.random() * 5) + 1);
+      }
 
-        window.onload = generateQuestion;
-    </script>
+      correctAnswer = eval(num1 + operator + num2);
+
+      const questionText = `What is ${num1} ${operator} ${num2}?`;
+      document.getElementById("question").innerText = questionText;
+      document.getElementById("result").innerText = "";
+      document.getElementById("answer").value = "";
+
+      const spokenOperator = {
+        '+': 'plus', '-': 'minus', '*': 'times', '/': 'divided by'
+      };
+      speak(`What is ${num1} ${spokenOperator[operator]} ${num2}`);
+    }
+
+    function checkAnswer() {
+      const userAnswer = parseFloat(document.getElementById("answer").value);
+      const resultEl = document.getElementById("result");
+
+      if (userAnswer === correctAnswer) {
+        const msg = `Correct! The answer is ${correctAnswer}. Well done!`;
+        resultEl.innerText = msg;
+        resultEl.style.color = "green";
+        speak(msg);
+      } else {
+        const msg = `Wrong! The correct answer is ${correctAnswer}.`;
+        resultEl.innerText = msg;
+        resultEl.style.color = "red";
+        speak(msg);
+      }
+    }
+    
+    
+    function goHome() {
+  document.getElementById("operationMenu").style.display = "grid";
+  document.getElementById("tutorialSection").style.display = "none";
+  document.getElementById("quiz").style.display = "none";
+}
+
+  </script>
 </body>
 </html>
