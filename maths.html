@@ -1,124 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primary School Arithmetic Quiz</title>
-    <style>
-          body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .quiz-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        }
-        h2 {
-            font-size: 36px;
-            color: #333;
-        }
-        p {
-            font-size: 28px;
-            color: #555;
-        }
-        input {
-            width: 120px;
-            font-size: 26px;
-            text-align: center;
-            padding: 10px;
-            border: 3px solid #ccc;
-            border-radius: 10px;
-            outline: none;
-        }
-        button {
-            margin-top: 20px;
-            padding: 15px 25px;
-            font-size: 24px;
-            border: none;
-            border-radius: 10px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #result {
-            font-size: 28px;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arithmetic Quiz - Fun Edition</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      margin: 0;
+      background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .title {
+      text-align: center;
+      margin: 40px 0 20px;
+      font-size: 40px;
+      color: #333;
+      text-shadow: 2px 2px #fff;
+    }
+    .operations-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 20px;
+      width: 90%;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+    .card {
+      background-color: #ff69b4;
+      color: white;
+      font-size: 36px;
+      padding: 40px;
+      text-align: center;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+    .card:hover {
+      background-color: #ff1493;
+      transform: scale(1.05);
+    }
+    .quiz-container {
+      display: none;
+      background: white;
+      max-width: 700px;
+      width: 90%;
+      margin: auto;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+    .question-box {
+      margin-bottom: 20px;
+    }
+    .question-text {
+      font-size: 26px;
+      margin-bottom: 10px;
+      color: #444;
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 5px 0;
+      font-size: 20px;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background-color: #87ceeb;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .options button:hover {
+      background-color: #00bfff;
+    }
+    #scoreDisplay {
+      font-size: 28px;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+    .summary-table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 18px;
+    }
+    .summary-table th, .summary-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    .summary-table th {
+      background-color: #ffebcd;
+    }
+    .correct {
+      color: green;
+    }
+    .incorrect {
+      color: red;
+    }
+  </style>
 </head>
 <body>
-    <div class="quiz-container">
-        <h2>Arithmetic Quiz</h2>
-        <p id="question"></p>
-        <input type="number" id="answer" placeholder="?">
-        <button onclick="checkAnswer()">Submit</button>
-        <p id="result"></p>
-        <button onclick="generateQuestion()">Next Question</button>
-    </div>
+  <div class="title">🎉 Arithmetic Fun Quiz 🎉</div>
+  <div class="operations-container">
+    <div class="card" onclick="startQuiz('+')">➕</div>
+    <div class="card" onclick="startQuiz('-')">➖</div>
+    <div class="card" onclick="startQuiz('*')">✖️</div>
+    <div class="card" onclick="startQuiz('/')">➗</div>
+  </div>
 
-    <script>
-        let num1, num2, correctAnswer, operator;
-        
-        const correctSound = new Audio('mixkit-crowd-in-church-applauding-484.wav');
-        const wrongSound = new Audio('button-10.mp3');
+  <div class="quiz-container" id="quiz">
+    <div id="quizContent"></div>
+    <div id="scoreDisplay"></div>
+    <div id="summary"></div>
+  </div>
 
-        function speak(text) {
-            const speech = new SpeechSynthesisUtterance(text);
-            speech.lang = 'en-US';
-            speech.rate = 0.9;
-            speech.voice = speechSynthesis.getVoices().find(voice => voice.name.includes("Google UK English Male"));
-            window.speechSynthesis.speak(speech);
+  <script>
+    let operator = null;
+    let questions = [];
+    let currentQuestion = 0;
+    let score = 0;
+    let summary = [];
+
+    function playSound(correct) {
+      const sound = new Audio(correct ? 'https://cdn.pixabay.com/download/audio/2022/10/05/audio_b0f8d45994.mp3?filename=success-1-6297.mp3' : 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_b05ac1c793.mp3?filename=error-126627.mp3');
+      sound.play();
+    }
+
+    function startQuiz(op) {
+      operator = op;
+      document.querySelector('.operations-container').style.display = 'none';
+      document.getElementById('quiz').style.display = 'block';
+      generateQuestions();
+      showQuestion();
+    }
+
+    function generateQuestions() {
+      questions = [];
+      summary = [];
+      score = 0;
+      currentQuestion = 0;
+      for (let i = 0; i < 10; i++) {
+        let num1 = Math.floor(Math.random() * 10) + 1;
+        let num2 = Math.floor(Math.random() * 10) + 1;
+        if (operator === '/' && num1 % num2 !== 0) {
+          num1 = num2 * (Math.floor(Math.random() * 5) + 1);
         }
+        const question = `${num1} ${operator} ${num2}`;
+        const answer = eval(question);
+        const options = generateOptions(answer);
+        questions.push({ question, answer, options });
+      }
+    }
 
-        function generateQuestion() {
-            const operations = ['+', '-', '*', '/'];
-            operator = operations[Math.floor(Math.random() * operations.length)];
-            num1 = Math.floor(Math.random() * 10) + 1;
-            num2 = Math.floor(Math.random() * 10) + 1;
+    function generateOptions(correct) {
+      const options = new Set();
+      options.add(correct);
+      while (options.size < 4) {
+        let fake = correct + Math.floor(Math.random() * 10 - 5);
+        if (fake !== correct && fake >= 0) options.add(fake);
+      }
+      return Array.from(options).sort(() => Math.random() - 0.5);
+    }
 
-            if (operator === '/' && num1 % num2 !== 0) {
-                num1 = num2 * (Math.floor(Math.random() * 5) + 1);
-            }
-            
-            correctAnswer = eval(num1 + operator + num2);
-            const questionText = `What is ${num1} ${operator} ${num2}?`;
-            document.getElementById("question").innerText = questionText;
-            document.getElementById("result").innerText = "";
-            document.getElementById("answer").value = "";
-            
-            speak(questionText);
-        }
+    function showQuestion() {
+      if (currentQuestion >= questions.length) {
+        document.getElementById('quizContent').innerHTML = `<h3>🎉 Quiz Completed! 🎉</h3>`;
+        document.getElementById('scoreDisplay').innerText = `🏆 Your Score: ${score} / 10`;
+        showSummary();
+        return;
+      }
 
-        function checkAnswer() {
-            const userAnswer = parseFloat(document.getElementById("answer").value);
-            if (userAnswer === correctAnswer) {
-                const successText = `Correct! The answer is ${correctAnswer}. Well done!`;
-                document.getElementById("result").innerText = successText;
-                document.getElementById("result").style.color = "green";
-                correctSound.play();
-                speak(successText);
-            } else {
-                const failText = `Wrong! The correct answer is ${correctAnswer}.`;
-                document.getElementById("result").innerText = failText;
-                document.getElementById("result").style.color = "red";
-                wrongSound.play();
-                speak(failText);
-            }
-        }
+      const q = questions[currentQuestion];
+      let html = `<div class="question-box">
+          <div class="question-text">Q${currentQuestion + 1}: What is ${q.question}?</div>
+          <div class="options">`;
+      q.options.forEach(opt => {
+        html += `<button onclick="checkAnswer(${opt})">${opt}</button>`;
+      });
+      html += '</div></div>';
+      document.getElementById('quizContent').innerHTML = html;
+    }
 
-        window.onload = generateQuestion;
-    </script>
+    function checkAnswer(selected) {
+      const q = questions[currentQuestion];
+      const correct = selected === q.answer;
+      playSound(correct);
+      if (correct) score++;
+      summary.push({
+        number: currentQuestion + 1,
+        question: q.question,
+        correctAnswer: q.answer,
+        userAnswer: selected,
+        isCorrect: correct
+      });
+      currentQuestion++;
+      setTimeout(showQuestion, 500);
+    }
+
+    function showSummary() {
+      let html = '<h4>📋 Answer Summary</h4><table class="summary-table"><tr><th>#</th><th>Question</th><th>Your Answer</th><th>Correct Answer</th><th>Result</th></tr>';
+      summary.forEach(item => {
+        html += `<tr>
+          <td>${item.number}</td>
+          <td>${item.question}</td>
+          <td>${item.userAnswer}</td>
+          <td>${item.correctAnswer}</td>
+          <td class="${item.isCorrect ? 'correct' : 'incorrect'}">${item.isCorrect ? '✔️' : '❌'}</td>
+        </tr>`;
+      });
+      html += '</table>';
+      document.getElementById('summary').innerHTML = html;
+    }
+  </script>
 </body>
 </html>
