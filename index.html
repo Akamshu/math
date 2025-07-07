@@ -293,8 +293,9 @@ function showSteps() {
     }
   }
 
-  steps += `<div class="step"><strong>🎉 Final Answer: ${result}</strong></div>`;
-  speakText = `Your final answer is ${result}`;
+ let formattedResult = result.toFixed(2);
+steps += `<div class="step"><strong>🎉 Final Answer: ${formattedResult}</strong></div>`;
+speakText = `Your final answer is ${formattedResult}`;
   stepBox.innerHTML = steps;
   speak(speakText);
 }
